@@ -48,14 +48,14 @@ async def detect_borders(input: DetectionInput):
     if (len(boxes) > 0):
         a, b, c, d = normalized_coords(boxes[0])
     else:
-        a, b, c, d = [0, 0], [0, img.shape[0]], [img.shape[1], 0], [img.shape[1], img.shape[0]]
+        a, b, c, d = [0, 0], [0, 112], [512, 0], [512, 112]
     pts1 = np.float32([a, b,
                        c, d])
-    pts2 = np.float32([[0, 0], [0, img.shape[0]],
-                       [img.shape[1], 0], [img.shape[1], img.shape[0]]])
+    pts2 = np.float32([[0, 0], [0, 112],
+                       [512, 0], [512, 112]])
     ##подсчет матрицы перспективы и последующее изменение перспективы номера при помощи координат углов
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
-    result = cv2.warpPerspective(img, matrix, (img.shape[1], img.shape[0]))
+    result = cv2.warpPerspective(img, matrix, (512, 112))
 
     ##отправка преобразованного изображения обратно на сервер
     s3 = boto3.client("s3",
