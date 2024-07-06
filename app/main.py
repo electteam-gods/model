@@ -15,7 +15,7 @@ from utils import normalized_coords
 
 app = FastAPI()
 
-model_det = YOLO('./weights/bestw.pt') ##определение модели детекции
+model_det = YOLO('./weights/weight.pt') ##определение модели детекции
 
 class DetectionInput(BaseModel):
     url: str
@@ -29,6 +29,7 @@ async def detect_borders(input: DetectionInput):
         response = requests.get(url)
         if response.status_code == 200:
             img = Image.open(io.BytesIO(response.content))
+            img = np.array(img)
         else:
             HTTPException(status_code=404, detail="Failed to download image")
     except Exception as e:
@@ -63,7 +64,7 @@ async def detect_borders(input: DetectionInput):
                        aws_secret_access_key='1dwymiu3T0y95gQSm3ivnQHnqHqatJPAyZIyqA4p',
                        region_name='ru-1',
                        endpoint_url='https://s3.timeweb.cloud')
-    bucket_name = "516d5635-a864ec80-ee47-4c91-bc37-97ff745b4050"
+    bucket_name = "516d5635-4ecebcb3-728f-458d-a2e8-786f8949b0d2"
     uid = str(uuid4())
     object_name = uid + "detectedphoto.png"
     data_serial = cv2.imencode('.png', result)[1].tobytes()
