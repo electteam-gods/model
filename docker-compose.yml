@@ -1,0 +1,11 @@
+
+services:
+  baba-zina-eyes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token eyJhIjoiMTA1ZGJiODQ5YTYwZWZlMDQzNDQ3NjE0YTA5ZjRjNzUiLCJ0IjoiMjc1YmJiMjQtN2Q5My00OGE3LWE4YjEtMWFhYjQ3YTNmOTIxIiwicyI6Ik5UUTJaak5rWVRNdE1qazJaaTAwWm1aaUxUbGtOR1F0TURsbU1tRXlNRFJoT1RGbCJ9
+    networks:
+      - default
