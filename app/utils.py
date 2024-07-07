@@ -1,7 +1,7 @@
 import numpy as np
 
 
-##Упорядочевает координаты баудинг бокса
+#Упорядочевает координаты баудинг бокса
 def normalized_coords(coords):
     ind1 = np.argmin(coords[:, 0])
     first = np.array(coords[ind1])

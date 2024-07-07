@@ -15,7 +15,7 @@ from utils import normalized_coords
 
 app = FastAPI()
 
-model_det = YOLO('./weights/weight.pt') ##определение модели детекции
+model_det = YOLO('./weights/best_lastmodel.pt') ##определение модели детекции
 
 class DetectionInput(BaseModel):
     url: str
@@ -23,7 +23,7 @@ class DetectionInput(BaseModel):
 
 @app.post("/")
 async def detect_borders(input: DetectionInput):
-    ##считывание изображения
+    #считывание изображения
     url = input.url
     try:
         response = requests.get(url)
@@ -34,10 +34,10 @@ async def detect_borders(input: DetectionInput):
             HTTPException(status_code=404, detail="Failed to download image")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    ##получение результата детекции
+    #получение результата детекции
     result = model_det(img, verbose=False)[0]
     boxes = result.obb.xyxyxyxy
-    ##реализация non max suppression
+    #реализация non max suppression
     n_max_conf = [x for x in result.obb.conf.numpy()]
     if len(n_max_conf) > 0:
         n_max_conf = max(n_max_conf)
@@ -45,7 +45,7 @@ async def detect_borders(input: DetectionInput):
         n_max_conf = 0
     nms = list(map(lambda x: x == n_max_conf, result.obb.conf.numpy()))
     boxes = np.array(boxes[nms], np.int32)
-    ##проверка наличия задетектированного бокса
+    #проверка наличия задетектированного бокса
     if (len(boxes) > 0):
         a, b, c, d = normalized_coords(boxes[0])
     else:
@@ -54,11 +54,16 @@ async def detect_borders(input: DetectionInput):
                        c, d])
     pts2 = np.float32([[0, 0], [0, 112],
                        [512, 0], [512, 112]])
-    ##подсчет матрицы перспективы и последующее изменение перспективы номера при помощи координат углов
+    #подсчет матрицы перспективы и последующее изменение перспективы номера при помощи координат углов
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     result = cv2.warpPerspective(img, matrix, (512, 112))
+    # Преобразование изображения в оттенки серого
+    gray_img = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
 
-    ##отправка преобразованного изображения обратно на сервер
+    # Преобразование одноканального изображения в трёхканальное
+    result = cv2.merge([gray_img, gray_img, gray_img])
+
+    #отправка преобразованного изображения обратно на сервер
     s3 = boto3.client("s3",
                        aws_access_key_id='BLZVPJ5JNCHVJZPR6SU3',
                        aws_secret_access_key='1dwymiu3T0y95gQSm3ivnQHnqHqatJPAyZIyqA4p',
