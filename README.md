@@ -114,6 +114,7 @@ S3 бакет был предоставлен сторонним облачны�
 - [ссылка на код формирования таблицы ответов на тестовый датасет](https://github.com/electteam-gods/model/blob/main/pipeline.ipynb)
 - [ссылка на скринкаст](https://disk.yandex.ru/d/lcg9v136wceEGw)&nbsp;
 - [ссылка на демо](http://plates.ellecteam.ayarayarovich.ru)&nbsp;
+- [ссылка на код обучения](https://github.com/electteam-gods/model/blob/main/train-notbook.ipynb)
 
 
 
